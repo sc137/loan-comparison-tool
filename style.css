@@ -1,0 +1,282 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Header styles */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+}
+
+header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: #666;
+    text-align: left;
+}
+
+/* Main content layout */
+main {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Tabs styles */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px 8px 0 0;
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    background-color: #e9ecef;
+}
+
+.tab-button.active {
+    background-color: white;
+    border-bottom-color: white;
+    color: #3498db;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Calculator section styles */
+.calculator-section {
+    display: none;
+    background: white;
+    border-radius: 0 10px 10px 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-section.active {
+    display: block;
+}
+
+.calculator-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+
+/* Form styles */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+/* Results section styles */
+.results {
+    display: none;  /* Hide results by default */
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.results.visible {
+    display: block;  /* Show results when visible class is added */
+}
+
+.results.highlight {
+    background-color: rgba(52, 152, 219, 0.1);
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem -1.5rem -1.5rem;
+}
+
+.results h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.term-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.term-section:last-child {
+    margin-bottom: 0;
+}
+
+.term-section h4 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item span:last-child {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.result-item.total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #eee;
+    font-weight: 600;
+}
+
+.result-item.total span:first-child {
+    color: #2c3e50;
+}
+
+.result-item.total span:last-child {
+    color: #3498db;
+    font-size: 1.1em;
+}
+
+/* Reset button styles */
+.reset-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+#reset-button {
+    padding: 0.75rem 2rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#reset-button:hover {
+    background-color: #c0392b;
+}
+
+/* Footer styles */
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .tab-button {
+        border-radius: 8px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .tab-button.active {
+        border-bottom-color: #3498db;
+    }
+
+    .calculator-section {
+        border-radius: 8px;
+    }
+
+    .calculator-section.active {
+        border-radius: 8px;
+    }
+
+    .result-item {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .results.highlight {
+        margin: 2rem -1rem -1rem;
+        padding: 1rem;
+    }
+} 

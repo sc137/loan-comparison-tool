@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Payment Calculator</title>
+</head>
+<body>
+    <header>
+        <h1>Loan Payment Calculator</h1>
+        <p>Calculate and compare your monthly payments and interest for both mortgages and auto loans.</p>
+    </header>
+
+    <main>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="mortgage">Mortgage Calculator</button>
+            <button class="tab-button" data-tab="auto">Auto Loan Calculator</button>
+        </div>
+
+        <div class="tab-content">
+            <section id="mortgage-calculator" class="calculator-section active">
+                <h2>Mortgage Calculator</h2>
+                <form id="mortgage-form">
+                    <div class="input-group">
+                        <label for="home-price">Home Price ($)</label>
+                        <input type="number" id="home-price" required min="0" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="down-payment">Down Payment ($)</label>
+                        <input type="number" id="down-payment" required min="0" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="mortgage-rate">Interest Rate (%)</label>
+                        <input type="text" id="mortgage-rate" required pattern="^\d*\.?\d{0,2}$" inputmode="decimal" placeholder="">
+                    </div>
+                    <div class="input-group">
+                        <label for="property-tax">Annual Property Tax ($)</label>
+                        <input type="number" id="property-tax" min="0" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="home-insurance">Annual Home Insurance ($)</label>
+                        <input type="number" id="home-insurance" min="0" step="100">
+                    </div>
+                    <button type="submit">Calculate Mortgage</button>
+                </form>
+                <div id="mortgage-results" class="results">
+                    <h3>Results</h3>
+                    <div class="term-section">
+                        <h4>15 Year Term</h4>
+                        <div class="result-item">
+                            <span>Amount Financed:</span>
+                            <span id="mortgage-amount-financed-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Principal & Interest:</span>
+                            <span id="mortgage-monthly-payment-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Interest:</span>
+                            <span id="mortgage-monthly-interest-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Principal:</span>
+                            <span id="mortgage-monthly-principal-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Tax:</span>
+                            <span id="mortgage-monthly-tax-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Insurance:</span>
+                            <span id="mortgage-monthly-insurance-15">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Monthly Payment:</span>
+                            <span id="mortgage-total-monthly-15">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest Paid:</span>
+                            <span id="mortgage-total-interest-15">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Cost of Loan:</span>
+                            <span id="mortgage-total-cost-15">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="term-section">
+                        <h4>30 Year Term</h4>
+                        <div class="result-item">
+                            <span>Amount Financed:</span>
+                            <span id="mortgage-amount-financed-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Principal & Interest:</span>
+                            <span id="mortgage-monthly-payment-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Interest:</span>
+                            <span id="mortgage-monthly-interest-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Principal:</span>
+                            <span id="mortgage-monthly-principal-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Tax:</span>
+                            <span id="mortgage-monthly-tax-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Monthly Insurance:</span>
+                            <span id="mortgage-monthly-insurance-30">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Monthly Payment:</span>
+                            <span id="mortgage-total-monthly-30">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest Paid:</span>
+                            <span id="mortgage-total-interest-30">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Cost of Loan:</span>
+                            <span id="mortgage-total-cost-30">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="auto-calculator" class="calculator-section">
+                <h2>Auto Loan Calculator</h2>
+                <form id="auto-form">
+                    <div class="input-group">
+                        <label for="vehicle-price">Vehicle Price ($)</label>
+                        <input type="number" id="vehicle-price" required min="0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="auto-down-payment">Down Payment ($)</label>
+                        <input type="number" id="auto-down-payment" min="0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="trade-in">Trade-in Value ($)</label>
+                        <input type="number" id="trade-in" min="0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="auto-rate">Interest Rate (%)</label>
+                        <input type="text" id="auto-rate" required pattern="^\d*\.?\d{0,2}$" inputmode="decimal" placeholder="">
+                    </div>
+                    <button type="submit">Calculate Auto Loan</button>
+                </form>
+                <div id="auto-results" class="results">
+                    <h3>Results</h3>
+                    <div class="term-section">
+                        <h4>48 Month Term</h4>
+                        <div class="result-item">
+                            <span>Monthly Payment:</span>
+                            <span id="auto-monthly-payment-48">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest Paid:</span>
+                            <span id="auto-total-interest-48">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Cost of Loan:</span>
+                            <span id="auto-total-cost-48">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="term-section">
+                        <h4>60 Month Term</h4>
+                        <div class="result-item">
+                            <span>Monthly Payment:</span>
+                            <span id="auto-monthly-payment-60">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest Paid:</span>
+                            <span id="auto-total-interest-60">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Cost of Loan:</span>
+                            <span id="auto-total-cost-60">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="term-section">
+                        <h4>72 Month Term</h4>
+                        <div class="result-item">
+                            <span>Monthly Payment:</span>
+                            <span id="auto-monthly-payment-72">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest Paid:</span>
+                            <span id="auto-total-interest-72">$0.00</span>
+                        </div>
+                        <div class="result-item total">
+                            <span>Total Cost of Loan:</span>
+                            <span id="auto-total-cost-72">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="reset-container">
+        <button id="reset-button" type="button">Start Over</button>
+    </div>
+
+    <footer>
+        <p><em><small>This calculator is for estimation purposes only. Actual payments may vary based on additional fees and charges.</small></em></p>
+    </footer>
+</body>
+</html>
