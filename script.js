@@ -189,7 +189,12 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
 // Add input validation for non-interest rate number inputs
 document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('input', function() {
-        if (this.dataset.allowDecimal === 'true') {
+        const stepValue = this.getAttribute('step');
+        const stepAllowsDecimal = stepValue && stepValue !== 'any' && stepValue.includes('.');
+        const allowsDecimal = this.dataset.allowDecimal === 'true' || stepAllowsDecimal || this.inputMode === 'decimal';
+        const decimalPlaces = stepAllowsDecimal ? (stepValue.split('.')[1] || '').length : 2;
+
+        if (allowsDecimal) {
             let sanitized = this.value.replace(/[^0-9.]/g, '');
             const parts = sanitized.split('.');
             if (parts.length > 2) {
@@ -197,7 +202,7 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
             }
             if (sanitized.includes('.')) {
                 const [whole, fraction = ''] = sanitized.split('.');
-                this.value = `${whole}.${fraction.slice(0, 2)}`;
+                this.value = `${whole}.${fraction.slice(0, decimalPlaces)}`;
                 return;
             }
             this.value = sanitized;
