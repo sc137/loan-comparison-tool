@@ -35,6 +35,132 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 // Initialize theme on page load
 initTheme();
 
+const HISTORY_STORAGE_KEY = 'loanHistoryEntries';
+const historyToggle = document.getElementById('history-toggle');
+const historyDropdown = document.getElementById('history-dropdown');
+const historyList = document.getElementById('history-list');
+const historyCount = document.getElementById('history-count');
+const historyClose = document.getElementById('history-close');
+
+function getHistoryEntries() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
+        return Array.isArray(stored) ? stored : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveHistoryEntries(entries) {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(entries));
+}
+
+function formatSavedDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+}
+
+function buildHistoryListItems(values) {
+    return values.map(({ label, value }) => `
+        <li>
+            <span>${label}</span>
+            <span>${value}</span>
+        </li>
+    `).join('');
+}
+
+function renderHistory() {
+    const entries = getHistoryEntries();
+    historyCount.textContent = entries.length;
+
+    if (!entries.length) {
+        historyList.innerHTML = '<p class="history-empty">No saved comparisons yet.</p>';
+        return;
+    }
+
+    historyList.innerHTML = entries.map(entry => `
+        <article class="history-item">
+            <h5>${entry.type} Loan</h5>
+            <time datetime="${entry.savedAt}">${formatSavedDate(entry.savedAt)}</time>
+            ${entry.terms.map(term => `
+                <div class="history-term">
+                    <p class="history-term-title">${term.label}</p>
+                    <ul>
+                        ${buildHistoryListItems(term.values)}
+                    </ul>
+                </div>
+            `).join('')}
+            <button class="history-remove" type="button" data-entry-id="${entry.id}">Remove</button>
+        </article>
+    `).join('');
+}
+
+function addHistoryEntry(entry) {
+    const entries = getHistoryEntries();
+    entries.unshift(entry);
+    saveHistoryEntries(entries);
+    renderHistory();
+}
+
+function removeHistoryEntry(entryId) {
+    const entries = getHistoryEntries().filter(entry => entry.id !== entryId);
+    saveHistoryEntries(entries);
+    renderHistory();
+}
+
+function openHistoryMenu() {
+    historyDropdown.classList.add('open');
+    historyToggle.setAttribute('aria-expanded', 'true');
+    historyDropdown.setAttribute('aria-hidden', 'false');
+}
+
+function closeHistoryMenu() {
+    historyDropdown.classList.remove('open');
+    historyToggle.setAttribute('aria-expanded', 'false');
+    historyDropdown.setAttribute('aria-hidden', 'true');
+}
+
+historyToggle.addEventListener('click', () => {
+    if (historyDropdown.classList.contains('open')) {
+        closeHistoryMenu();
+        return;
+    }
+    openHistoryMenu();
+});
+
+historyClose.addEventListener('click', closeHistoryMenu);
+
+document.addEventListener('click', (event) => {
+    if (!historyDropdown.classList.contains('open')) {
+        return;
+    }
+    if (!historyDropdown.contains(event.target) && !historyToggle.contains(event.target)) {
+        closeHistoryMenu();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && historyDropdown.classList.contains('open')) {
+        closeHistoryMenu();
+    }
+});
+
+historyList.addEventListener('click', (event) => {
+    const removeButton = event.target.closest('.history-remove');
+    if (!removeButton) {
+        return;
+    }
+    removeHistoryEntry(removeButton.dataset.entryId);
+});
+
+renderHistory();
+
 // Tab switching functionality
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -114,12 +240,14 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
     const rate = parseFloat(document.getElementById('mortgage-rate').value);
     const propertyTax = parseFloat(document.getElementById('property-tax').value) || 0;
     const homeInsurance = parseFloat(document.getElementById('home-insurance').value) || 0;
+    const savedAt = new Date().toISOString();
     
     // Calculate loan amount
     const principal = homePrice - downPayment;
     
     // Calculate for each term
     const terms = [15, 30];
+    const mortgageHistoryTerms = [];
     terms.forEach(term => {
         // Calculate monthly payments
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
@@ -145,12 +273,34 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
         document.getElementById(`mortgage-total-monthly-${term}`).textContent = formatCurrency(totalMonthlyPayment);
         document.getElementById(`mortgage-total-interest-${term}`).textContent = formatCurrency(totalInterest);
         document.getElementById(`mortgage-total-cost-${term}`).textContent = formatCurrency(totalCost);
+
+        mortgageHistoryTerms.push({
+            label: `${term} Year Term`,
+            values: [
+                { label: 'Amount Financed', value: formatCurrency(principal) },
+                { label: 'Monthly Principal & Interest', value: formatCurrency(monthlyPrincipalAndInterest) },
+                { label: 'Monthly Interest', value: formatCurrency(monthlyInterest) },
+                { label: 'Monthly Principal', value: formatCurrency(monthlyPrincipal) },
+                { label: 'Monthly Tax', value: formatCurrency(monthlyTax) },
+                { label: 'Monthly Insurance', value: formatCurrency(monthlyInsurance) },
+                { label: 'Total Monthly Payment', value: formatCurrency(totalMonthlyPayment) },
+                { label: 'Total Interest Paid', value: formatCurrency(totalInterest) },
+                { label: 'Total Cost of Loan', value: formatCurrency(totalCost) }
+            ]
+        });
     });
 
     // Show and scroll to results
     const resultsSection = document.getElementById('mortgage-results');
     resultsSection.classList.add('visible');
     scrollToResults('mortgage-calculator');
+
+    addHistoryEntry({
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type: 'Mortgage',
+        savedAt,
+        terms: mortgageHistoryTerms
+    });
 });
 
 // Handle auto loan form submission
@@ -162,12 +312,14 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
     const downPayment = parseFloat(document.getElementById('auto-down-payment').value) || 0;
     const tradeIn = parseFloat(document.getElementById('trade-in').value) || 0;
     const rate = parseFloat(document.getElementById('auto-rate').value);
+    const savedAt = new Date().toISOString();
     
     // Calculate loan amount
     const principal = vehiclePrice - downPayment - tradeIn;
     
     // Calculate for each term
     const terms = [48, 60, 72];
+    const autoHistoryTerms = [];
     terms.forEach(term => {
         const years = term / 12;
         const monthlyPayment = calculateMortgage(principal, rate, years);
@@ -178,12 +330,28 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
         document.getElementById(`auto-monthly-payment-${term}`).textContent = formatCurrency(monthlyPayment);
         document.getElementById(`auto-total-interest-${term}`).textContent = formatCurrency(totalInterest);
         document.getElementById(`auto-total-cost-${term}`).textContent = formatCurrency(totalCost);
+
+        autoHistoryTerms.push({
+            label: `${term} Month Term`,
+            values: [
+                { label: 'Monthly Payment', value: formatCurrency(monthlyPayment) },
+                { label: 'Total Interest Paid', value: formatCurrency(totalInterest) },
+                { label: 'Total Cost of Loan', value: formatCurrency(totalCost) }
+            ]
+        });
     });
 
     // Show and scroll to results
     const resultsSection = document.getElementById('auto-results');
     resultsSection.classList.add('visible');
     scrollToResults('auto-calculator');
+
+    addHistoryEntry({
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type: 'Auto',
+        savedAt,
+        terms: autoHistoryTerms
+    });
 });
 
 // Add input validation for non-interest rate number inputs
