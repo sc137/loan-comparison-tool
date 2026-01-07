@@ -46,11 +46,11 @@
                 <form id="mortgage-form">
                     <div class="input-group">
                         <label for="home-price">Home Price ($)</label>
-                        <input type="number" id="home-price" required min="0" step="1000">
+                        <input type="number" id="home-price" required min="0" step="0.01" inputmode="decimal" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="down-payment">Down Payment ($)</label>
-                        <input type="number" id="down-payment" min="0" step="1000">
+                        <input type="number" id="down-payment" min="0" step="0.01" inputmode="decimal" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="mortgage-rate">Interest Rate (%)</label>
@@ -154,15 +154,15 @@
                 <form id="auto-form">
                     <div class="input-group">
                         <label for="vehicle-price">Vehicle Price ($)</label>
-                        <input type="number" id="vehicle-price" required min="0" step="1">
+                        <input type="number" id="vehicle-price" required min="0" step="0.01" inputmode="decimal" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="auto-down-payment">Down Payment ($)</label>
-                        <input type="number" id="auto-down-payment" min="0" step="1">
+                        <input type="number" id="auto-down-payment" min="0" step="0.01" inputmode="decimal" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="trade-in">Trade-in Value ($)</label>
-                        <input type="number" id="trade-in" min="0" step="1">
+                        <input type="number" id="trade-in" min="0" step="0.01" inputmode="decimal" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="auto-rate">Interest Rate (%)</label>
