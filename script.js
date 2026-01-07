@@ -123,7 +123,7 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
     terms.forEach(term => {
         // Calculate monthly payments
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
-        const monthlyTax = propertyTax / 12;
+        const monthlyTax = propertyTax;
         const monthlyInsurance = homeInsurance / 12;
         const totalMonthlyPayment = monthlyPrincipalAndInterest + monthlyTax + monthlyInsurance;
         
@@ -189,8 +189,18 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
 // Add input validation for non-interest rate number inputs
 document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('input', function() {
-        // Only allow whole numbers
-        this.value = this.value.replace(/[^\d]/g, '');
+        const stepAttr = this.getAttribute('step');
+        const allowsDecimal = stepAttr === 'any' || (stepAttr && stepAttr.includes('.'));
+
+        if (allowsDecimal) {
+            const sanitizedValue = this.value.replace(/[^0-9.]/g, '');
+            const decimalParts = sanitizedValue.split('.');
+            this.value = decimalParts.length > 1
+                ? `${decimalParts.shift()}.${decimalParts.join('')}`
+                : sanitizedValue;
+        } else {
+            this.value = this.value.replace(/\D/g, '');
+        }
     });
 });
 
