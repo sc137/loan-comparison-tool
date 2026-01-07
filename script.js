@@ -123,7 +123,7 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
     terms.forEach(term => {
         // Calculate monthly payments
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
-        const monthlyTax = propertyTax / 12;
+        const monthlyTax = propertyTax;
         const monthlyInsurance = homeInsurance;
         const totalMonthlyPayment = monthlyPrincipalAndInterest + monthlyTax + monthlyInsurance;
         
