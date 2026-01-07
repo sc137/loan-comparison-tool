@@ -187,7 +187,7 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
 });
 
 // Add input validation for non-interest rate number inputs
-document.querySelectorAll('input[type="number"]').forEach(input => {
+document.querySelectorAll('input[data-allow-decimal], input[type="number"]').forEach(input => {
     input.addEventListener('input', function() {
         const stepValue = this.getAttribute('step');
         const stepAllowsDecimal = stepValue && stepValue !== 'any' && stepValue.includes('.');
