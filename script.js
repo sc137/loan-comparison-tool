@@ -124,7 +124,7 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
         // Calculate monthly payments
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
         const monthlyTax = propertyTax / 12;
-        const monthlyInsurance = homeInsurance / 12;
+        const monthlyInsurance = homeInsurance;
         const totalMonthlyPayment = monthlyPrincipalAndInterest + monthlyTax + monthlyInsurance;
         
         // Calculate monthly interest and principal
@@ -189,6 +189,16 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
 // Add input validation for non-interest rate number inputs
 document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('input', function() {
+        if (this.dataset.allowDecimal === 'true') {
+            let sanitized = this.value.replace(/[^0-9.]/g, '');
+            const parts = sanitized.split('.');
+            if (parts.length > 2) {
+                sanitized = `${parts[0]}.${parts.slice(1).join('')}`;
+            }
+            this.value = sanitized;
+            return;
+        }
+
         // Only allow whole numbers
         this.value = this.value.replace(/[^\d]/g, '');
     });
