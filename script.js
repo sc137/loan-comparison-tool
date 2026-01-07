@@ -195,6 +195,11 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
             if (parts.length > 2) {
                 sanitized = `${parts[0]}.${parts.slice(1).join('')}`;
             }
+            if (sanitized.includes('.')) {
+                const [whole, fraction = ''] = sanitized.split('.');
+                this.value = `${whole}.${fraction.slice(0, 2)}`;
+                return;
+            }
             this.value = sanitized;
             return;
         }
