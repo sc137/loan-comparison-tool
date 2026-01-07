@@ -46,23 +46,23 @@
                 <form id="mortgage-form">
                     <div class="input-group">
                         <label for="home-price">Home Price ($)</label>
-                        <input type="text" id="home-price" required step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="home-price" required pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="down-payment">Down Payment ($)</label>
-                        <input type="text" id="down-payment" step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="down-payment" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="mortgage-rate">Interest Rate (%)</label>
-                        <input type="text" id="mortgage-rate" required pattern="^\d*\.?\d{0,2}$" inputmode="decimal" placeholder="">
+                        <input type="text" id="mortgage-rate" required pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true" placeholder="">
                     </div>
                     <div class="input-group">
                         <label for="property-tax">Monthly Property Tax ($)</label>
-                        <input type="text" id="property-tax" step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="property-tax" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="home-insurance">Monthly Insurance Payment ($)</label>
-                        <input type="text" id="home-insurance" step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="home-insurance" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <button type="submit">Calculate Mortgage</button>
                 </form>
@@ -154,19 +154,19 @@
                 <form id="auto-form">
                     <div class="input-group">
                         <label for="vehicle-price">Vehicle Price ($)</label>
-                        <input type="text" id="vehicle-price" required step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="vehicle-price" required pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="auto-down-payment">Down Payment ($)</label>
-                        <input type="text" id="auto-down-payment" step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="auto-down-payment" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="trade-in">Trade-in Value ($)</label>
-                        <input type="text" id="trade-in" step="0.01" inputmode="decimal" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
+                        <input type="text" id="trade-in" pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true">
                     </div>
                     <div class="input-group">
                         <label for="auto-rate">Interest Rate (%)</label>
-                        <input type="text" id="auto-rate" required pattern="^\d*\.?\d{0,2}$" inputmode="decimal" placeholder="">
+                        <input type="text" id="auto-rate" required pattern="^\\d*(\\.\\d{0,2})?$" data-allow-decimal="true" placeholder="">
                     </div>
                     <button type="submit">Calculate Auto Loan</button>
                 </form>
