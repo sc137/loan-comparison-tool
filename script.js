@@ -360,7 +360,7 @@ document.querySelectorAll('input[data-allow-decimal], input[type="number"]').for
         const stepValue = this.getAttribute('step');
         const stepAllowsDecimal = stepValue && stepValue !== 'any' && stepValue.includes('.');
         const allowsDecimal = this.dataset.allowDecimal === 'true' || stepAllowsDecimal || this.inputMode === 'decimal';
-        const decimalPlaces = stepAllowsDecimal ? (stepValue.split('.')[1] || '').length : 2;
+        const decimalPlaces = stepAllowsDecimal ? (stepValue.split('.')[1] || '').length : null;
 
         if (allowsDecimal) {
             let sanitized = this.value.replace(/[^0-9.]/g, '');
@@ -369,8 +369,12 @@ document.querySelectorAll('input[data-allow-decimal], input[type="number"]').for
                 sanitized = `${parts[0]}.${parts.slice(1).join('')}`;
             }
             if (sanitized.includes('.')) {
-                const [whole, fraction = ''] = sanitized.split('.');
-                this.value = `${whole}.${fraction.slice(0, decimalPlaces)}`;
+                if (decimalPlaces !== null) {
+                    const [whole, fraction = ''] = sanitized.split('.');
+                    this.value = `${whole}.${fraction.slice(0, decimalPlaces)}`;
+                    return;
+                }
+                this.value = sanitized;
                 return;
             }
             this.value = sanitized;
