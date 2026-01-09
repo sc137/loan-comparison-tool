@@ -290,6 +290,13 @@ header p {
     margin: 0.5rem 0 0.25rem;
 }
 
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.history-restore,
 .history-remove {
     background-color: transparent;
     border: 1px solid #e74c3c;
@@ -297,6 +304,16 @@ header p {
     border-radius: 6px;
     padding: 0.25rem 0.6rem;
     font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.history-restore {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.history-restore:hover {
+    background-color: rgba(59, 130, 246, 0.12);
 }
 
 .history-remove:hover {

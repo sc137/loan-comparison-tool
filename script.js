@@ -109,7 +109,10 @@ function renderHistory() {
                     </ul>
                 </div>
             `).join('')}
-            <button class="history-remove" type="button" data-entry-id="${entry.id}">Remove</button>
+            <div class="history-actions">
+                <button class="history-restore" type="button" data-entry-id="${entry.id}">Restore</button>
+                <button class="history-remove" type="button" data-entry-id="${entry.id}">Remove</button>
+            </div>
         </article>
     `).join('');
 }
@@ -168,6 +171,18 @@ historyList.addEventListener('click', (event) => {
     const removeButton = event.target.closest('.history-remove');
     if (removeButton) {
         removeHistoryEntry(removeButton.dataset.entryId);
+        return;
+    }
+
+    const restoreButton = event.target.closest('.history-restore');
+    if (restoreButton) {
+        const entries = getHistoryEntries();
+        const selectedEntry = entries.find(entry => entry.id === restoreButton.dataset.entryId);
+        if (!selectedEntry) {
+            return;
+        }
+        restoreHistoryEntry(selectedEntry);
+        closeHistoryMenu();
         return;
     }
 
