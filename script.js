@@ -185,6 +185,18 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+function getNumericInputValue(inputId) {
+    const rawValue = document.getElementById(inputId).value.trim();
+    if (rawValue === '') {
+        return 0;
+    }
+    const parsed = Number.parseFloat(rawValue);
+    if (Number.isNaN(parsed)) {
+        return 0;
+    }
+    return Math.max(0, parsed);
+}
+
 // Calculate monthly mortgage payment
 function calculateMortgage(principal, rate, years) {
     const monthlyRate = rate / 100 / 12;
@@ -235,15 +247,15 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
     e.preventDefault();
     
     // Get input values with default to 0 for empty fields
-    const homePrice = parseFloat(document.getElementById('home-price').value) || 0;
-    const downPayment = parseFloat(document.getElementById('down-payment').value) || 0;
-    const rate = parseFloat(document.getElementById('mortgage-rate').value);
-    const propertyTax = parseFloat(document.getElementById('property-tax').value) || 0;
-    const homeInsurance = parseFloat(document.getElementById('home-insurance').value) || 0;
+    const homePrice = getNumericInputValue('home-price');
+    const downPayment = getNumericInputValue('down-payment');
+    const rate = getNumericInputValue('mortgage-rate');
+    const propertyTax = getNumericInputValue('property-tax');
+    const homeInsurance = getNumericInputValue('home-insurance');
     const savedAt = new Date().toISOString();
     
     // Calculate loan amount
-    const principal = homePrice - downPayment;
+    const principal = Math.max(0, homePrice - downPayment);
     
     // Calculate for each term
     const terms = [15, 30];
@@ -308,14 +320,14 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Get input values with default to 0 for empty fields
-    const vehiclePrice = parseFloat(document.getElementById('vehicle-price').value) || 0;
-    const downPayment = parseFloat(document.getElementById('auto-down-payment').value) || 0;
-    const tradeIn = parseFloat(document.getElementById('trade-in').value) || 0;
-    const rate = parseFloat(document.getElementById('auto-rate').value);
+    const vehiclePrice = getNumericInputValue('vehicle-price');
+    const downPayment = getNumericInputValue('auto-down-payment');
+    const tradeIn = getNumericInputValue('trade-in');
+    const rate = getNumericInputValue('auto-rate');
     const savedAt = new Date().toISOString();
     
     // Calculate loan amount
-    const principal = vehiclePrice - downPayment - tradeIn;
+    const principal = Math.max(0, vehiclePrice - downPayment - tradeIn);
     
     // Calculate for each term
     const terms = [48, 60, 72];
