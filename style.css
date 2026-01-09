@@ -394,6 +394,12 @@ label {
     font-weight: 500;
 }
 
+.calculator-section form label,
+.calculator-section form button {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 input {
     width: 100%;
     padding: 8px;
