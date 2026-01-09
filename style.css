@@ -82,6 +82,7 @@
 }
 
 [data-theme="dark"] .history-item time,
+[data-theme="dark"] .history-item .history-rate,
 [data-theme="dark"] .history-empty {
     color: #b0b0b0;
 }
@@ -257,6 +258,12 @@ header p {
     display: block;
     font-size: 0.8rem;
     color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.history-item .history-rate {
+    font-size: 0.85rem;
+    color: #4b5563;
     margin-bottom: 0.5rem;
 }
 

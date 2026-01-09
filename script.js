@@ -75,6 +75,18 @@ function buildHistoryListItems(values) {
     `).join('');
 }
 
+function getSavedRate(entry) {
+    if (entry.savedRate) {
+        return entry.savedRate;
+    }
+    const firstTerm = entry.terms?.[0];
+    if (!firstTerm) {
+        return null;
+    }
+    const rateItem = firstTerm.values?.find(item => item.label === 'Interest Rate');
+    return rateItem ? rateItem.value : null;
+}
+
 function renderHistory() {
     const entries = getHistoryEntries();
     historyCount.textContent = entries.length;
@@ -88,6 +100,7 @@ function renderHistory() {
         <article class="history-item">
             <h5>${entry.type} Loan</h5>
             <time datetime="${entry.savedAt}">${formatSavedDate(entry.savedAt)}</time>
+            ${getSavedRate(entry) ? `<p class="history-rate">Saved Rate: ${getSavedRate(entry)}</p>` : ''}
             ${entry.terms.map(term => `
                 <div class="history-term">
                     <p class="history-term-title">${term.label}</p>
@@ -316,6 +329,7 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
         id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         type: 'Mortgage',
         savedAt,
+        savedRate: formatRate(rate),
         terms: mortgageHistoryTerms
     });
 });
@@ -368,6 +382,7 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
         id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         type: 'Auto',
         savedAt,
+        savedRate: formatRate(rate),
         terms: autoHistoryTerms
     });
 });
