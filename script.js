@@ -291,15 +291,19 @@ function scrollToResults(formId) {
     }
 }
 
+function toMonthlyAmount(annualAmount) {
+    return annualAmount / 12;
+}
+
 function updateMortgageResults({ homePrice, downPayment, rate, propertyTax, homeInsurance }) {
     const principal = Math.max(0, homePrice - downPayment);
     const terms = [15, 30];
     const mortgageHistoryTerms = [];
+    const monthlyTax = toMonthlyAmount(propertyTax);
+    const monthlyInsurance = toMonthlyAmount(homeInsurance);
 
     terms.forEach(term => {
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
-        const monthlyTax = propertyTax / 12;
-        const monthlyInsurance = homeInsurance / 12;
         const totalMonthlyPayment = monthlyPrincipalAndInterest + monthlyTax + monthlyInsurance;
 
         const monthlyInterest = calculateMonthlyInterest(principal, rate);
