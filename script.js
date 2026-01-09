@@ -185,6 +185,10 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+function formatRate(rate) {
+    return `${rate.toFixed(2)}%`;
+}
+
 function getNumericInputValue(inputId) {
     const rawValue = document.getElementById(inputId).value.trim();
     if (rawValue === '') {
@@ -289,6 +293,7 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
         mortgageHistoryTerms.push({
             label: `${term} Year Term`,
             values: [
+                { label: 'Interest Rate', value: formatRate(rate) },
                 { label: 'Amount Financed', value: formatCurrency(principal) },
                 { label: 'Monthly Principal & Interest', value: formatCurrency(monthlyPrincipalAndInterest) },
                 { label: 'Monthly Interest', value: formatCurrency(monthlyInterest) },
@@ -346,6 +351,7 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
         autoHistoryTerms.push({
             label: `${term} Month Term`,
             values: [
+                { label: 'Interest Rate', value: formatRate(rate) },
                 { label: 'Monthly Payment', value: formatCurrency(monthlyPayment) },
                 { label: 'Total Interest Paid', value: formatCurrency(totalInterest) },
                 { label: 'Total Cost of Loan', value: formatCurrency(totalCost) }
