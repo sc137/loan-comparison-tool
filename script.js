@@ -97,7 +97,7 @@ function renderHistory() {
     }
 
     historyList.innerHTML = entries.map(entry => `
-        <article class="history-item">
+        <article class="history-item" data-entry-id="${entry.id}">
             <h5>${entry.type} Loan</h5>
             <time datetime="${entry.savedAt}">${formatSavedDate(entry.savedAt)}</time>
             ${getSavedRate(entry) ? `<p class="history-rate">Saved Rate: ${getSavedRate(entry)}</p>` : ''}
@@ -166,25 +166,45 @@ document.addEventListener('keydown', (event) => {
 
 historyList.addEventListener('click', (event) => {
     const removeButton = event.target.closest('.history-remove');
-    if (!removeButton) {
+    if (removeButton) {
+        removeHistoryEntry(removeButton.dataset.entryId);
         return;
     }
-    removeHistoryEntry(removeButton.dataset.entryId);
+
+    const historyItem = event.target.closest('.history-item');
+    if (!historyItem) {
+        return;
+    }
+    const entries = getHistoryEntries();
+    const selectedEntry = entries.find(entry => entry.id === historyItem.dataset.entryId);
+    if (!selectedEntry) {
+        return;
+    }
+    restoreHistoryEntry(selectedEntry);
+    closeHistoryMenu();
 });
 
 renderHistory();
 
 // Tab switching functionality
+function activateTab(tabId) {
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.calculator-section').forEach(section => section.classList.remove('active'));
+
+    const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+    const activeSection = document.getElementById(`${tabId}-calculator`);
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
+}
+
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
-        // Remove active class from all buttons and sections
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.calculator-section').forEach(section => section.classList.remove('active'));
-        
-        // Add active class to clicked button and corresponding section
-        button.classList.add('active');
         const tabId = button.getAttribute('data-tab');
-        document.getElementById(`${tabId}-calculator`).classList.add('active');
+        activateTab(tabId);
     });
 });
 
@@ -212,6 +232,18 @@ function getNumericInputValue(inputId) {
         return 0;
     }
     return Math.max(0, parsed);
+}
+
+function setInputValue(inputId, value) {
+    const input = document.getElementById(inputId);
+    if (!input) {
+        return;
+    }
+    if (value === null || value === undefined) {
+        input.value = '';
+        return;
+    }
+    input.value = String(value);
 }
 
 // Calculate monthly mortgage payment
@@ -259,40 +291,22 @@ function scrollToResults(formId) {
     }
 }
 
-// Handle mortgage form submission
-document.getElementById('mortgage-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get input values with default to 0 for empty fields
-    const homePrice = getNumericInputValue('home-price');
-    const downPayment = getNumericInputValue('down-payment');
-    const rate = getNumericInputValue('mortgage-rate');
-    const propertyTax = getNumericInputValue('property-tax');
-    const homeInsurance = getNumericInputValue('home-insurance');
-    const savedAt = new Date().toISOString();
-    
-    // Calculate loan amount
+function updateMortgageResults({ homePrice, downPayment, rate, propertyTax, homeInsurance }) {
     const principal = Math.max(0, homePrice - downPayment);
-    
-    // Calculate for each term
     const terms = [15, 30];
     const mortgageHistoryTerms = [];
+
     terms.forEach(term => {
-        // Calculate monthly payments
         const monthlyPrincipalAndInterest = calculateMortgage(principal, rate, term);
         const monthlyTax = propertyTax / 12;
         const monthlyInsurance = homeInsurance / 12;
         const totalMonthlyPayment = monthlyPrincipalAndInterest + monthlyTax + monthlyInsurance;
-        
-        // Calculate monthly interest and principal
+
         const monthlyInterest = calculateMonthlyInterest(principal, rate);
         const monthlyPrincipal = monthlyPrincipalAndInterest - monthlyInterest;
-        
-        // Calculate total interest and cost
         const totalInterest = calculateTotalInterest(monthlyPrincipalAndInterest, principal, term);
         const totalCost = principal + totalInterest;
-        
-        // Update results for this term
+
         document.getElementById(`mortgage-amount-financed-${term}`).textContent = formatCurrency(principal);
         document.getElementById(`mortgage-monthly-payment-${term}`).textContent = formatCurrency(monthlyPrincipalAndInterest);
         document.getElementById(`mortgage-monthly-interest-${term}`).textContent = formatCurrency(monthlyInterest);
@@ -320,44 +334,49 @@ document.getElementById('mortgage-form').addEventListener('submit', function(e) 
         });
     });
 
-    // Show and scroll to results
     const resultsSection = document.getElementById('mortgage-results');
     resultsSection.classList.add('visible');
     scrollToResults('mortgage-calculator');
+
+    return mortgageHistoryTerms;
+}
+
+// Handle mortgage form submission
+document.getElementById('mortgage-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const inputValues = {
+        homePrice: getNumericInputValue('home-price'),
+        downPayment: getNumericInputValue('down-payment'),
+        rate: getNumericInputValue('mortgage-rate'),
+        propertyTax: getNumericInputValue('property-tax'),
+        homeInsurance: getNumericInputValue('home-insurance')
+    };
+    const savedAt = new Date().toISOString();
+
+    const mortgageHistoryTerms = updateMortgageResults(inputValues);
 
     addHistoryEntry({
         id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         type: 'Mortgage',
         savedAt,
-        savedRate: formatRate(rate),
+        savedRate: formatRate(inputValues.rate),
+        inputValues,
         terms: mortgageHistoryTerms
     });
 });
 
-// Handle auto loan form submission
-document.getElementById('auto-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get input values with default to 0 for empty fields
-    const vehiclePrice = getNumericInputValue('vehicle-price');
-    const downPayment = getNumericInputValue('auto-down-payment');
-    const tradeIn = getNumericInputValue('trade-in');
-    const rate = getNumericInputValue('auto-rate');
-    const savedAt = new Date().toISOString();
-    
-    // Calculate loan amount
+function updateAutoResults({ vehiclePrice, downPayment, tradeIn, rate }) {
     const principal = Math.max(0, vehiclePrice - downPayment - tradeIn);
-    
-    // Calculate for each term
     const terms = [48, 60, 72];
     const autoHistoryTerms = [];
+
     terms.forEach(term => {
         const years = term / 12;
         const monthlyPayment = calculateMortgage(principal, rate, years);
         const totalInterest = calculateTotalInterest(monthlyPayment, principal, years);
         const totalCost = principal + totalInterest;
-        
-        // Update results for this term
+
         document.getElementById(`auto-monthly-payment-${term}`).textContent = formatCurrency(monthlyPayment);
         document.getElementById(`auto-total-interest-${term}`).textContent = formatCurrency(totalInterest);
         document.getElementById(`auto-total-cost-${term}`).textContent = formatCurrency(totalCost);
@@ -373,16 +392,59 @@ document.getElementById('auto-form').addEventListener('submit', function(e) {
         });
     });
 
-    // Show and scroll to results
     const resultsSection = document.getElementById('auto-results');
     resultsSection.classList.add('visible');
     scrollToResults('auto-calculator');
+
+    return autoHistoryTerms;
+}
+
+function restoreHistoryEntry(entry) {
+    if (!entry?.inputValues) {
+        return;
+    }
+
+    if (entry.type === 'Mortgage') {
+        activateTab('mortgage');
+        setInputValue('home-price', entry.inputValues.homePrice);
+        setInputValue('down-payment', entry.inputValues.downPayment);
+        setInputValue('mortgage-rate', entry.inputValues.rate);
+        setInputValue('property-tax', entry.inputValues.propertyTax);
+        setInputValue('home-insurance', entry.inputValues.homeInsurance);
+        updateMortgageResults(entry.inputValues);
+        return;
+    }
+
+    if (entry.type === 'Auto') {
+        activateTab('auto');
+        setInputValue('vehicle-price', entry.inputValues.vehiclePrice);
+        setInputValue('auto-down-payment', entry.inputValues.downPayment);
+        setInputValue('trade-in', entry.inputValues.tradeIn);
+        setInputValue('auto-rate', entry.inputValues.rate);
+        updateAutoResults(entry.inputValues);
+    }
+}
+
+// Handle auto loan form submission
+document.getElementById('auto-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const inputValues = {
+        vehiclePrice: getNumericInputValue('vehicle-price'),
+        downPayment: getNumericInputValue('auto-down-payment'),
+        tradeIn: getNumericInputValue('trade-in'),
+        rate: getNumericInputValue('auto-rate')
+    };
+    const savedAt = new Date().toISOString();
+
+    const autoHistoryTerms = updateAutoResults(inputValues);
 
     addHistoryEntry({
         id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         type: 'Auto',
         savedAt,
-        savedRate: formatRate(rate),
+        savedRate: formatRate(inputValues.rate),
+        inputValues,
         terms: autoHistoryTerms
     });
 });
